@@ -13,6 +13,7 @@ import (
 
 	"DnsSpoofer/internal/dns"
 	"DnsSpoofer/internal/proxy"
+	"DnsSpoofer/internal/udpsink"
 )
 
 // Default configuration values
@@ -34,6 +35,12 @@ var (
 		".cursor.com",
 		".cursorapi.com",
 		".cursor-cdn.com",
+		// YouTube and related Google video services
+		".youtube.com",
+		".ytimg.com",
+		".googlevideo.com",
+		".youtube-nocookie.com",
+		".youtu.be",
 	}
 	defaultUpstreamDNS = []string{"8.8.8.8:53", "1.1.1.1:53"}
 )
@@ -44,6 +51,7 @@ func main() {
 	dnsPort := flag.String("dns-port", ":53", "DNS server listen address")
 	httpPort := flag.String("http-port", ":80", "HTTP proxy listen address")
 	httpsPort := flag.String("https-port", ":443", "HTTPS proxy listen address")
+	udpSinkPort := flag.String("udp-sink-port", ":443", "UDP sink listen address (drops QUIC/HTTP3 traffic to force TCP fallback)")
 	spoofSuffixes := flag.String("spoof-suffixes", strings.Join(defaultSpoofSuffixes, ","), "Comma-separated list of domain suffixes to spoof")
 	upstreamDNS := flag.String("upstream-dns", strings.Join(defaultUpstreamDNS, ","), "Comma-separated list of upstream DNS servers")
 	resolverDNS := flag.String("resolver-dns", "8.8.8.8:53", "DNS server for proxy to resolve backend hosts (to avoid loops)")
@@ -74,6 +82,7 @@ func main() {
 	log.Printf("DNS listen: %s", *dnsPort)
 	log.Printf("HTTP listen: %s", *httpPort)
 	log.Printf("HTTPS listen: %s", *httpsPort)
+	log.Printf("UDP sink listen: %s (QUIC/HTTP3 drop)", *udpSinkPort)
 	log.Printf("Upstream DNS: %v", upstreams)
 	log.Printf("Resolver DNS: %s", *resolverDNS)
 	log.Println("===========================")
@@ -105,6 +114,15 @@ func main() {
 		log.Fatalf("Failed to start proxy server: %v", err)
 	}
 
+	// Create and start UDP sink (drops QUIC/HTTP3 traffic to force TCP fallback)
+	udpSink := udpsink.New(udpsink.Config{
+		ListenAddr: *udpSinkPort,
+	})
+
+	if err := udpSink.Start(); err != nil {
+		log.Fatalf("Failed to start UDP sink: %v", err)
+	}
+
 	log.Println("All servers started successfully")
 
 	// Wait for shutdown signal
@@ -118,7 +136,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// Shutdown both servers
+	// Shutdown all servers
 	var shutdownErr error
 	if err := dnsServer.Shutdown(ctx); err != nil {
 		log.Printf("DNS server shutdown error: %v", err)
@@ -126,6 +144,10 @@ func main() {
 	}
 	if err := proxyServer.Shutdown(ctx); err != nil {
 		log.Printf("Proxy server shutdown error: %v", err)
+		shutdownErr = err
+	}
+	if err := udpSink.Shutdown(ctx); err != nil {
+		log.Printf("UDP sink shutdown error: %v", err)
 		shutdownErr = err
 	}
 

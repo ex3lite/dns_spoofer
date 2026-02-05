@@ -78,6 +78,7 @@ func (s *Server) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 
 		if s.shouldSpoof(q.Name) {
 			// Spoof A and AAAA records for our domains
+			// Block HTTPS/SVCB to prevent QUIC/HTTP3 hints
 			switch q.Qtype {
 			case dns.TypeA:
 				log.Printf("[DNS] Spoofing %s -> %s", q.Name, s.config.SpoofIP)
@@ -109,6 +110,14 @@ func (s *Server) handleRequest(w dns.ResponseWriter, r *dns.Msg) {
 				}
 				// If SpoofIP is IPv4, just return empty AAAA (no error, just no answer)
 				log.Printf("[DNS] Spoofing AAAA %s -> (empty, forcing IPv4)", q.Name)
+
+			case dns.TypeHTTPS, dns.TypeSVCB:
+				// Return NODATA for HTTPS/SVCB records to prevent QUIC/HTTP3 hints
+				// This forces clients to use TCP (HTTP/2 or HTTP/1.1) instead of QUIC
+				// Also prevents ECH (Encrypted Client Hello) keys from being delivered
+				log.Printf("[DNS] Blocking %s %s -> NODATA (preventing QUIC/ECH)", dns.TypeToString[q.Qtype], q.Name)
+				// Empty answer = NODATA response (RCODE=NOERROR, no answers)
+				// Client will fall back to A/AAAA records and TCP
 
 			default:
 				// For other record types, forward to upstream
