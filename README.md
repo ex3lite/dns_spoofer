@@ -116,10 +116,4 @@ Logs: `journalctl -u dnsspoofer -f`
 
 ---
 
-## License
-
-MIT (or specify your license).
-
----
-
 **Kakadu Secure Technologies**
