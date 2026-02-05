@@ -1,0 +1,28 @@
+[Unit]
+Description=DNS Spoofer + Proxy for OpenAI
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/dnsspoofer \
+    -spoof-ip=95.164.123.192 \
+    -dns-port=:53 \
+    -http-port=:80 \
+    -https-port=:443 \
+    -spoof-suffixes=.openai.com,.chatgpt.com,.oaistatic.com,.oaiusercontent.com,.gemini.google.com,.aistudio.google.com,.ai.google.dev,.generativelanguage.googleapis.com,.makersuite.google.com,.cursor.sh,.cursor.com,.cursorapi.com,.cursor-cdn.com \
+    -upstream-dns=8.8.8.8:53,1.1.1.1:53 \
+    -resolver-dns=8.8.8.8:53
+Restart=always
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=false
+ProtectSystem=full
+ProtectHome=true
+
+# Capabilities for binding to privileged ports
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
