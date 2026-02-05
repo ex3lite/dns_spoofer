@@ -1,0 +1,46 @@
+# Binaries
+dnsspoofer
+dnsspoofer-*
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Build output
+/dist/
+/build/
+out/
+
+# Go
+*.test
+*.out
+go.work
+go.work.sum
+vendor/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env and secrets
+.env
+.env.local
+*.pem
+*.key
+
+# Logs
+*.log
+logs/
+
+# Local config (do not commit credentials)
+config.local.yaml
+config.local.yml
