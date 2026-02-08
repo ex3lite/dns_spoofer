@@ -1,6 +1,10 @@
-# DnsSpoofer
+![DNS Spoofer](header.png)
 
-**DNS relay with selective spoofing + transparent TCP proxy** for redirecting AI service traffic (OpenAI, ChatGPT, Google Gemini, Cursor, YouTube) through your own server. One binary: DNS answers with your IP for chosen domains, then proxies raw TCP (HTTP/HTTPS) to the real backends.
+**DNS relay with selective spoofing + transparent TCP proxy** for redirecting service traffic (OpenAI, ChatGPT, Google Gemini, Cursor, Microsoft Copilot) through your own server. One binary: DNS answers with your IP for chosen domains, then proxies raw TCP (HTTP/HTTPS) to the real backends.
+
+**Purpose:** This tool is designed to bypass regional restrictions and geo-blocking by routing traffic through your own server located in an unrestricted region. It allows access to AI services that may be blocked or restricted in certain countries.
+
+**Russian version:** [README.ru.md](README.ru.md)
 
 **Author:** [Kakadu Secure Technologies](https://github.com/kakadu-secure)
 
@@ -21,7 +25,7 @@
    - Listens on UDP 443 and drops all packets (no response).
    - Forces QUIC/HTTP3 connections to fail, making clients fall back to TCP.
 
-Result: clients using your server as DNS get AI/YouTube domains pointed at you; your proxy forwards that traffic to the real endpoints via TCP.
+Result: clients using your server as DNS get AI service domains pointed at you; your proxy forwards that traffic to the real endpoints via TCP.
 
 ---
 
@@ -32,13 +36,13 @@ Result: clients using your server as DNS get AI/YouTube domains pointed at you; 
 | **OpenAI / ChatGPT** | `.openai.com`, `.chatgpt.com`, `.oaistatic.com`, `.oaiusercontent.com` |
 | **Google Gemini** | `.gemini.google.com`, `.aistudio.google.com`, `.ai.google.dev`, `.generativelanguage.googleapis.com`, `.makersuite.google.com` |
 | **Cursor IDE** | `.cursor.sh`, `.cursor.com`, `.cursorapi.com`, `.cursor-cdn.com` |
-| **YouTube** | `.youtube.com`, `.ytimg.com`, `.googlevideo.com`, `.youtube-nocookie.com`, `.youtu.be` |
+| **Microsoft Copilot** | `.copilot.microsoft.com`, `.bing.com`, `.bingapis.com`, `.edgeservices.bing.com`, `.edgecopilot.microsoft.com` |
 
 ---
 
 ## QUIC / HTTP3 Handling
 
-Modern browsers (Chrome, Edge, Firefox) and services like YouTube use **QUIC (HTTP/3)** over UDP port 443. This bypasses traditional TCP proxies. DnsSpoofer handles this with a multi-layer approach:
+Modern browsers (Chrome, Edge, Firefox) and some services use **QUIC (HTTP/3)** over UDP port 443. This bypasses traditional TCP proxies. DnsSpoofer handles this with a multi-layer approach:
 
 ### How we force TCP fallback
 
@@ -85,6 +89,10 @@ GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o dnsspoofer-linux-amd64 .
 # Or use Makefile
 make build        # local
 make build-linux  # linux/amd64
+make build-ubuntu # linux/amd64 (alias)
+
+# Or use build script
+./scripts/build-ubuntu.sh
 ```
 
 ---
@@ -142,6 +150,105 @@ sudo systemctl status dnsspoofer
 ```
 
 Logs: `journalctl -u dnsspoofer -f`
+
+---
+
+## Deployment
+
+### First-time installation (bootstrap)
+
+For a fresh server where DnsSpoofer has never been installed:
+
+```bash
+./scripts/bootstrap-server.sh [SERVER]
+# Or with force flag to reinstall
+./scripts/bootstrap-server.sh --force [SERVER]
+```
+
+The bootstrap script will:
+- Check for systemd
+- Build Linux binary
+- Install binary and systemd unit
+- Stop and disable systemd-resolved (free port 53)
+- Enable and start the service
+
+### Updating existing installation
+
+For servers where DnsSpoofer is already installed:
+
+```bash
+./scripts/deploy.sh [SERVER]
+# Or use Makefile
+make deploy
+```
+
+The deploy script will:
+- Build Linux binary
+- Upload and install binary and unit file
+- Restart the service
+
+Both scripts support:
+- Command-line argument: `./scripts/deploy.sh root@192.168.1.1`
+- Environment variables: `DNS_SPOOFER_SERVER=192.168.1.1 ./scripts/deploy.sh`
+- Local config file: `scripts/deploy.local` (gitignored, put credentials there)
+
+See script headers for full usage details.
+
+---
+
+## Debug Tools
+
+The project includes debug utilities located in `scripts/debug/` for troubleshooting and monitoring:
+
+### Fetch Server Debug Log
+
+Fetches detailed debug logs from the server when `DEBUG_LOG_PATH` environment variable is set.
+
+**Setup on server:**
+1. Edit `/etc/systemd/system/dnsspoofer.service` and add to `[Service]` section:
+   ```ini
+   Environment=DEBUG_LOG_PATH=/tmp/dnsspoofer_debug.log
+   ```
+2. Restart the service: `sudo systemctl restart dnsspoofer`
+
+**Usage:**
+```bash
+./scripts/debug/fetch-server-debug.sh [output_file]
+# Default output: .cursor/debug_server.log
+```
+
+The script connects to the server via SSH and downloads the debug log file. Requires `scripts/deploy.local` configuration or SSH key access.
+
+### View Error Logs
+
+Filters and displays errors, connection issues, and tunnel closures from server logs.
+
+**Usage:**
+```bash
+./scripts/debug/logs-errors.sh [lines]
+# Default: last 500 lines
+```
+
+Shows filtered output for:
+- Errors
+- SNI peek timeouts
+- Backend dial failures
+- Resolve errors
+- Tunnel closures
+- I/O timeouts
+
+### Check DNS Resolver
+
+Tests DNS resolver behavior for repeated lookups to verify IP rotation.
+
+**Usage:**
+```bash
+go run scripts/debug/check_resolver.go
+```
+
+Checks what IP addresses are returned for multiple DNS queries of the same hostname. Useful for debugging load balancing and IP selection issues.
+
+**Note:** All debug tools require server access via `scripts/deploy.local` configuration or SSH keys.
 
 ---
 

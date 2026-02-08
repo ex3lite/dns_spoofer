@@ -44,3 +44,7 @@ logs/
 # Local config (do not commit credentials)
 config.local.yaml
 config.local.yml
+scripts/deploy.local
+
+# Cursor IDE (local development only, do not commit)
+.cursor/

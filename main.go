@@ -35,12 +35,12 @@ var (
 		".cursor.com",
 		".cursorapi.com",
 		".cursor-cdn.com",
-		// YouTube and related Google video services
-		".youtube.com",
-		".ytimg.com",
-		".googlevideo.com",
-		".youtube-nocookie.com",
-		".youtu.be",
+		// Microsoft Copilot
+		".copilot.microsoft.com",
+		".bing.com",
+		".bingapis.com",
+		".edgeservices.bing.com",
+		".edgecopilot.microsoft.com",
 	}
 	defaultUpstreamDNS = []string{"8.8.8.8:53", "1.1.1.1:53"}
 )

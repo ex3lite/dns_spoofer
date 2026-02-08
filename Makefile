@@ -1,4 +1,4 @@
-.PHONY: all build build-linux build-darwin clean
+.PHONY: all build build-linux build-darwin build-ubuntu clean
 
 BINARY_NAME=dnsspoofer
 LDFLAGS=-ldflags="-s -w"
@@ -10,6 +10,10 @@ build:
 
 build-linux:
 	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o $(BINARY_NAME)-linux-amd64 .
+
+build-ubuntu: build-linux
+	@echo "Note: build-ubuntu is an alias for build-linux"
+	@echo "For explicit Ubuntu build script, use: ./scripts/build-ubuntu.sh"
 
 build-darwin:
 	GOOS=darwin GOARCH=arm64 go build $(LDFLAGS) -o $(BINARY_NAME)-darwin-arm64 .
