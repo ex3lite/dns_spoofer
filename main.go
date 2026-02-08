@@ -41,29 +41,27 @@ var (
 		".bingapis.com",
 		".edgeservices.bing.com",
 		".edgecopilot.microsoft.com",
-		// GitHub Copilot
+		// GitHub Copilot (only Copilot-specific domains, not general GitHub)
 		".githubcopilot.com",
 		".individual.githubcopilot.com",
+		".api.individual.githubcopilot.com", // Explicit API endpoint
 		".business.githubcopilot.com",
 		".enterprise.githubcopilot.com",
 		".copilot-proxy.githubusercontent.com",
 		".origin-tracker.githubusercontent.com",
 		".copilot-telemetry.githubusercontent.com",
-		".github.com",
-		".githubusercontent.com",
-		".api.github.com",
 	}
 	defaultUpstreamDNS = []string{"8.8.8.8:53", "1.1.1.1:53"}
 )
 
 func main() {
 	// Parse command line flags
-	// Default spoof IP from environment variable, or require it to be set via flag
+	// Default spoof IP from environment variable, or use default server IP
 	defaultSpoofIP := os.Getenv("DNS_SPOOFER_IP")
 	if defaultSpoofIP == "" {
-		defaultSpoofIP = "127.0.0.1" // Fallback, but user should set DNS_SPOOFER_IP or -spoof-ip
+		defaultSpoofIP = "95.164.123.192" // Default server IP (can be overridden via DNS_SPOOFER_IP env var or -spoof-ip flag)
 	}
-	spoofIP := flag.String("spoof-ip", defaultSpoofIP, "IP address to return for spoofed domains (or set DNS_SPOOFER_IP env var)")
+	spoofIP := flag.String("spoof-ip", defaultSpoofIP, "IP address to return for spoofed domains (default: 95.164.123.192, or set DNS_SPOOFER_IP env var)")
 	dnsPort := flag.String("dns-port", ":53", "DNS server listen address")
 	httpPort := flag.String("http-port", ":80", "HTTP proxy listen address")
 	httpsPort := flag.String("https-port", ":443", "HTTPS proxy listen address")

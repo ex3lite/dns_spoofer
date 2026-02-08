@@ -37,7 +37,7 @@
 | **Google Gemini** | `.gemini.google.com`, `.aistudio.google.com`, `.ai.google.dev`, `.generativelanguage.googleapis.com`, `.makersuite.google.com` |
 | **Cursor IDE** | `.cursor.sh`, `.cursor.com`, `.cursorapi.com`, `.cursor-cdn.com` |
 | **Microsoft Copilot** | `.copilot.microsoft.com`, `.bing.com`, `.bingapis.com`, `.edgeservices.bing.com`, `.edgecopilot.microsoft.com` |
-| **GitHub Copilot** | `.githubcopilot.com`, `.individual.githubcopilot.com`, `.business.githubcopilot.com`, `.enterprise.githubcopilot.com`, `.copilot-proxy.githubusercontent.com`, `.origin-tracker.githubusercontent.com`, `.copilot-telemetry.githubusercontent.com`, `.github.com`, `.githubusercontent.com`, `.api.github.com` |
+| **GitHub Copilot** | `.githubcopilot.com`, `.individual.githubcopilot.com`, `.api.individual.githubcopilot.com`, `.business.githubcopilot.com`, `.enterprise.githubcopilot.com`, `.copilot-proxy.githubusercontent.com`, `.origin-tracker.githubusercontent.com`, `.copilot-telemetry.githubusercontent.com` |
 
 ---
 
@@ -80,9 +80,9 @@
 
 ## Конфигурация
 
-**Обязательно:** Установите IP адрес вашего сервера одним из способов:
+**Конфигурация по умолчанию:** IP по умолчанию для спуфа - `95.164.123.192`. Чтобы использовать другой IP, используйте один из способов:
 
-1. **Переменная окружения** (рекомендуется):
+1. **Переменная окружения**:
    ```bash
    export DNS_SPOOFER_IP=YOUR_SERVER_IP
    ```
@@ -94,7 +94,7 @@
 
 3. **Файл сервиса systemd** (см. секцию Systemd ниже)
 
-Установленный IP адрес будет возвращаться DNS для всех спуфнутых доменов. Это должен быть публичный IP вашего сервера, где запущен DnsSpoofer.
+IP адрес будет возвращаться DNS для всех спуфнутых доменов. Это должен быть публичный IP вашего сервера, где запущен DnsSpoofer.
 
 ---
 
@@ -120,7 +120,7 @@ make build-ubuntu # linux/amd64 (алиас)
 
 ## Использование
 
-**Важно:** Необходимо установить IP адрес вашего сервера. Используйте:
+**IP по умолчанию:** IP по умолчанию для спуфа - `95.164.123.192`. Чтобы использовать другой IP, используйте:
 - Переменную окружения: `DNS_SPOOFER_IP=YOUR_SERVER_IP`
 - Флаг командной строки: `-spoof-ip=YOUR_SERVER_IP`
 
@@ -148,7 +148,7 @@ sudo ./dnsspoofer -spoof-ip=YOUR_SERVER_IP
 
 | Флаг | По умолчанию | Описание |
 |------|---------|-------------|
-| `-spoof-ip` | `$DNS_SPOOFER_IP` или `127.0.0.1` | IP, возвращаемый для спуфнутых доменов (установите переменную `DNS_SPOOFER_IP` или используйте флаг) |
+| `-spoof-ip` | `$DNS_SPOOFER_IP` или `95.164.123.192` | IP, возвращаемый для спуфнутых доменов (по умолчанию: 95.164.123.192, можно переопределить через переменную `DNS_SPOOFER_IP` или флаг) |
 | `-dns-port` | `:53` | Адрес прослушивания DNS |
 | `-http-port` | `:80` | Адрес прослушивания HTTP прокси |
 | `-https-port` | `:443` | Адрес прослушивания HTTPS прокси (TCP) |
@@ -169,7 +169,7 @@ sudo chmod +x /usr/local/bin/dnsspoofer
 sudo cp dnsspoofer.service /etc/systemd/system/
 ```
 
-Отредактируйте `/etc/systemd/system/dnsspoofer.service` чтобы установить IP вашего сервера. Файл сервиса содержит заглушку:
+Файл сервиса использует IP по умолчанию `95.164.123.192`. Чтобы использовать другой IP, отредактируйте `/etc/systemd/system/dnsspoofer.service` и раскомментируйте:
 
 ```ini
 Environment=DNS_SPOOFER_IP=YOUR_SERVER_IP

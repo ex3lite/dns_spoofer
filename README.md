@@ -37,7 +37,7 @@ Result: clients using your server as DNS get AI service domains pointed at you; 
 | **Google Gemini** | `.gemini.google.com`, `.aistudio.google.com`, `.ai.google.dev`, `.generativelanguage.googleapis.com`, `.makersuite.google.com` |
 | **Cursor IDE** | `.cursor.sh`, `.cursor.com`, `.cursorapi.com`, `.cursor-cdn.com` |
 | **Microsoft Copilot** | `.copilot.microsoft.com`, `.bing.com`, `.bingapis.com`, `.edgeservices.bing.com`, `.edgecopilot.microsoft.com` |
-| **GitHub Copilot** | `.githubcopilot.com`, `.individual.githubcopilot.com`, `.business.githubcopilot.com`, `.enterprise.githubcopilot.com`, `.copilot-proxy.githubusercontent.com`, `.origin-tracker.githubusercontent.com`, `.copilot-telemetry.githubusercontent.com`, `.github.com`, `.githubusercontent.com`, `.api.github.com` |
+| **GitHub Copilot** | `.githubcopilot.com`, `.individual.githubcopilot.com`, `.api.individual.githubcopilot.com`, `.business.githubcopilot.com`, `.enterprise.githubcopilot.com`, `.copilot-proxy.githubusercontent.com`, `.origin-tracker.githubusercontent.com`, `.copilot-telemetry.githubusercontent.com` |
 
 ---
 
@@ -80,9 +80,9 @@ If you want to completely disable QUIC on client side:
 
 ## Configuration
 
-**Required:** Set your server's IP address using one of these methods:
+**Default Configuration:** The default spoof IP is `95.164.123.192`. To use a different IP, use one of these methods:
 
-1. **Environment variable** (recommended):
+1. **Environment variable**:
    ```bash
    export DNS_SPOOFER_IP=YOUR_SERVER_IP
    ```
@@ -94,7 +94,7 @@ If you want to completely disable QUIC on client side:
 
 3. **Systemd service file** (see Systemd section below)
 
-The IP address you set will be returned by DNS for all spoofed domains. This should be the public IP of your server where DnsSpoofer is running.
+The IP address will be returned by DNS for all spoofed domains. This should be the public IP of your server where DnsSpoofer is running.
 
 ---
 
@@ -120,7 +120,7 @@ make build-ubuntu # linux/amd64 (alias)
 
 ## Usage
 
-**Important:** You must set your server's IP address. Use either:
+**Default IP:** The default spoof IP is `95.164.123.192`. To use a different IP, use either:
 - Environment variable: `DNS_SPOOFER_IP=YOUR_SERVER_IP`
 - Command-line flag: `-spoof-ip=YOUR_SERVER_IP`
 
@@ -148,7 +148,7 @@ sudo ./dnsspoofer -spoof-ip=YOUR_SERVER_IP
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `-spoof-ip` | `$DNS_SPOOFER_IP` or `127.0.0.1` | IP returned for spoofed domains (set `DNS_SPOOFER_IP` env var or use flag) |
+| `-spoof-ip` | `$DNS_SPOOFER_IP` or `95.164.123.192` | IP returned for spoofed domains (default: 95.164.123.192, can override via `DNS_SPOOFER_IP` env var or flag) |
 | `-dns-port` | `:53` | DNS listen address |
 | `-http-port` | `:80` | HTTP proxy listen address |
 | `-https-port` | `:443` | HTTPS proxy listen address (TCP) |
@@ -169,7 +169,7 @@ sudo chmod +x /usr/local/bin/dnsspoofer
 sudo cp dnsspoofer.service /etc/systemd/system/
 ```
 
-Edit `/etc/systemd/system/dnsspoofer.service` to set your server IP. The service file includes a placeholder:
+The service file uses the default IP `95.164.123.192`. To use a different IP, edit `/etc/systemd/system/dnsspoofer.service` and uncomment:
 
 ```ini
 Environment=DNS_SPOOFER_IP=YOUR_SERVER_IP

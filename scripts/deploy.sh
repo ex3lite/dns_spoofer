@@ -17,6 +17,7 @@ if [[ -f "$SCRIPT_DIR/deploy.local" ]]; then
   set -a
   source "$SCRIPT_DIR/deploy.local"
   set +a
+  echo "Loaded credentials from $SCRIPT_DIR/deploy.local"
 fi
 BINARY_NAME="dnsspoofer"
 REMOTE_BINARY="${DNS_SPOOFER_BINARY:-/usr/local/bin/dnsspoofer}"
@@ -45,12 +46,23 @@ if [[ "$REMOTE" != *"@"* ]]; then
 fi
 
 PORT="${DNS_SPOOFER_PORT:-22}"
-SSH_OPTS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -p "$PORT")
-SCP_OPTS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -P "$PORT")
+# SSH options - disable key auth when using password
+if [[ -n "${DNS_SPOOFER_PASSWORD:-}" ]]; then
+  SSH_OPTS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -o PreferredAuthentications=password -o PubkeyAuthentication=no -p "$PORT")
+  SCP_OPTS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -o PreferredAuthentications=password -o PubkeyAuthentication=no -P "$PORT")
+else
+  SSH_OPTS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -p "$PORT")
+  SCP_OPTS=(-o StrictHostKeyChecking=no -o ConnectTimeout=10 -P "$PORT")
+fi
+
+# Check if sshpass is available
+if ! command -v sshpass &> /dev/null; then
+  echo "Warning: sshpass not found. Install it with: brew install hudochenkov/sshpass/sshpass (macOS) or apt-get install sshpass (Linux)" >&2
+fi
 
 # Optional sshpass for password auth
 RUN_SSH() {
-  if [[ -n "${DNS_SPOOFER_PASSWORD:-}" ]]; then
+  if [[ -n "${DNS_SPOOFER_PASSWORD:-}" ]] && command -v sshpass &> /dev/null; then
     sshpass -p "$DNS_SPOOFER_PASSWORD" ssh "${SSH_OPTS[@]}" "$REMOTE" "$@"
   else
     ssh "${SSH_OPTS[@]}" "$REMOTE" "$@"
@@ -60,7 +72,7 @@ RUN_SSH() {
 RUN_SCP() {
   local src="$1"
   local dest="$2"
-  if [[ -n "${DNS_SPOOFER_PASSWORD:-}" ]]; then
+  if [[ -n "${DNS_SPOOFER_PASSWORD:-}" ]] && command -v sshpass &> /dev/null; then
     sshpass -p "$DNS_SPOOFER_PASSWORD" scp "${SCP_OPTS[@]}" "$src" "$REMOTE:$dest"
   else
     scp "${SCP_OPTS[@]}" "$src" "$REMOTE:$dest"

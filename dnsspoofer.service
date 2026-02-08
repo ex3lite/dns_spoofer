@@ -4,16 +4,16 @@ After=network.target
 
 [Service]
 Type=simple
-# Set DNS_SPOOFER_IP environment variable (required)
-# Option 1: Set directly in service file
-Environment=DNS_SPOOFER_IP=YOUR_SERVER_IP
-# Option 2: Use EnvironmentFile (create /etc/dnsspoofer.conf with DNS_SPOOFER_IP=YOUR_SERVER_IP)
+# Default IP is 95.164.123.192 (set in main.go)
+# To override, uncomment and set DNS_SPOOFER_IP:
+# Environment=DNS_SPOOFER_IP=YOUR_SERVER_IP
+# Or use EnvironmentFile (create /etc/dnsspoofer.conf with DNS_SPOOFER_IP=YOUR_SERVER_IP)
 # EnvironmentFile=/etc/dnsspoofer.conf
 ExecStart=/usr/local/bin/dnsspoofer \
     -dns-port=:53 \
     -http-port=:80 \
     -https-port=:443 \
-    -spoof-suffixes=.openai.com,.chatgpt.com,.oaistatic.com,.oaiusercontent.com,.gemini.google.com,.aistudio.google.com,.ai.google.dev,.generativelanguage.googleapis.com,.makersuite.google.com,.cursor.sh,.cursor.com,.cursorapi.com,.cursor-cdn.com,.copilot.microsoft.com,.bing.com,.bingapis.com,.edgeservices.bing.com,.edgecopilot.microsoft.com,.githubcopilot.com,.individual.githubcopilot.com,.business.githubcopilot.com,.enterprise.githubcopilot.com,.copilot-proxy.githubusercontent.com,.origin-tracker.githubusercontent.com,.copilot-telemetry.githubusercontent.com,.github.com,.githubusercontent.com,.api.github.com \
+    -spoof-suffixes=.openai.com,.chatgpt.com,.oaistatic.com,.oaiusercontent.com,.gemini.google.com,.aistudio.google.com,.ai.google.dev,.generativelanguage.googleapis.com,.makersuite.google.com,.cursor.sh,.cursor.com,.cursorapi.com,.cursor-cdn.com,.copilot.microsoft.com,.bing.com,.bingapis.com,.edgeservices.bing.com,.edgecopilot.microsoft.com,.githubcopilot.com,.individual.githubcopilot.com,.api.individual.githubcopilot.com,.business.githubcopilot.com,.enterprise.githubcopilot.com,.copilot-proxy.githubusercontent.com,.origin-tracker.githubusercontent.com,.copilot-telemetry.githubusercontent.com \
     -upstream-dns=8.8.8.8:53,1.1.1.1:53 \
     -resolver-dns=8.8.8.8:53
 Restart=always
