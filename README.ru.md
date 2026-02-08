@@ -6,7 +6,7 @@
 
 **English version:** [README.md](README.md)
 
-**Автор:** [Kakadu Secure Technologies](https://github.com/kakadu-secure)
+**Автор:** [Kakadu Secure Technologies](https://github.com/Matrena-VPN)
 
 ---
 
@@ -261,4 +261,4 @@ go run scripts/debug/check_resolver.go
 
 ---
 
-**Kakadu Secure Technologies**
+**[Kakadu Secure Technologies](https://github.com/Matrena-VPN)**

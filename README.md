@@ -6,7 +6,7 @@
 
 **Russian version:** [README.ru.md](README.ru.md)
 
-**Author:** [Kakadu Secure Technologies](https://github.com/kakadu-secure)
+**Author:** [Kakadu Secure Technologies](https://github.com/Matrena-VPN)
 
 ---
 
@@ -261,4 +261,4 @@ Checks what IP addresses are returned for multiple DNS queries of the same hostn
 
 ---
 
-**Kakadu Secure Technologies**
+**[Kakadu Secure Technologies](https://github.com/Matrena-VPN)**
