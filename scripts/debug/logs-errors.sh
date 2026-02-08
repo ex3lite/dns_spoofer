@@ -11,7 +11,11 @@ if [[ -f "$REPO_ROOT/scripts/deploy.local" ]]; then
   source "$REPO_ROOT/scripts/deploy.local"
   set +a
 fi
-REMOTE="${DNS_SPOOFER_SERVER:-95.164.123.192}"
+REMOTE="${DNS_SPOOFER_SERVER:-}"
+if [[ -z "$REMOTE" ]]; then
+  echo "Error: DNS_SPOOFER_SERVER not set. Set it in scripts/deploy.local or as environment variable." >&2
+  exit 1
+fi
 if [[ "$REMOTE" != *"@"* ]]; then
   REMOTE="root@${REMOTE}"
 fi

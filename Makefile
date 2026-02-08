@@ -23,8 +23,13 @@ build-all: build-linux build-darwin
 clean:
 	rm -f $(BINARY_NAME) $(BINARY_NAME)-linux-amd64 $(BINARY_NAME)-darwin-arm64
 
-# Deploy to server (edit REMOTE as needed)
-REMOTE=root@95.164.123.192
+# Deploy to server (set REMOTE environment variable or edit below)
+REMOTE?=root@YOUR_SERVER_IP
 deploy: build-linux
+	@if [ "$(REMOTE)" = "root@YOUR_SERVER_IP" ]; then \
+		echo "Error: Set REMOTE environment variable or edit Makefile" >&2; \
+		echo "Example: make deploy REMOTE=root@YOUR_SERVER_IP" >&2; \
+		exit 1; \
+	fi
 	scp $(BINARY_NAME)-linux-amd64 $(REMOTE):/usr/local/bin/$(BINARY_NAME)
 	ssh $(REMOTE) "chmod +x /usr/local/bin/$(BINARY_NAME)"

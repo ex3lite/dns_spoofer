@@ -41,8 +41,10 @@ fi
 
 if [[ -z "$REMOTE" ]]; then
   echo "Usage: $0 [--force] <server>   OR   DNS_SPOOFER_SERVER=host $0" >&2
-  echo "Example: $0 95.164.123.192" >&2
-  echo "         $0 --force root@95.164.123.192" >&2
+  echo "Example: $0 YOUR_SERVER_IP" >&2
+  echo "         $0 --force root@YOUR_SERVER_IP" >&2
+  echo "" >&2
+  echo "Or set DNS_SPOOFER_SERVER environment variable or in scripts/deploy.local" >&2
   exit 1
 fi
 

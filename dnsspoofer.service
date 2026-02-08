@@ -4,8 +4,12 @@ After=network.target
 
 [Service]
 Type=simple
+# Set DNS_SPOOFER_IP environment variable (required)
+# Option 1: Set directly in service file
+Environment=DNS_SPOOFER_IP=YOUR_SERVER_IP
+# Option 2: Use EnvironmentFile (create /etc/dnsspoofer.conf with DNS_SPOOFER_IP=YOUR_SERVER_IP)
+# EnvironmentFile=/etc/dnsspoofer.conf
 ExecStart=/usr/local/bin/dnsspoofer \
-    -spoof-ip=95.164.123.192 \
     -dns-port=:53 \
     -http-port=:80 \
     -https-port=:443 \

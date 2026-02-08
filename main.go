@@ -47,7 +47,12 @@ var (
 
 func main() {
 	// Parse command line flags
-	spoofIP := flag.String("spoof-ip", "95.164.123.192", "IP address to return for spoofed domains")
+	// Default spoof IP from environment variable, or require it to be set via flag
+	defaultSpoofIP := os.Getenv("DNS_SPOOFER_IP")
+	if defaultSpoofIP == "" {
+		defaultSpoofIP = "127.0.0.1" // Fallback, but user should set DNS_SPOOFER_IP or -spoof-ip
+	}
+	spoofIP := flag.String("spoof-ip", defaultSpoofIP, "IP address to return for spoofed domains (or set DNS_SPOOFER_IP env var)")
 	dnsPort := flag.String("dns-port", ":53", "DNS server listen address")
 	httpPort := flag.String("http-port", ":80", "HTTP proxy listen address")
 	httpsPort := flag.String("https-port", ":443", "HTTPS proxy listen address")

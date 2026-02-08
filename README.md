@@ -77,6 +77,26 @@ If you want to completely disable QUIC on client side:
 
 ---
 
+## Configuration
+
+**Required:** Set your server's IP address using one of these methods:
+
+1. **Environment variable** (recommended):
+   ```bash
+   export DNS_SPOOFER_IP=YOUR_SERVER_IP
+   ```
+
+2. **Command-line flag**:
+   ```bash
+   ./dnsspoofer -spoof-ip=YOUR_SERVER_IP
+   ```
+
+3. **Systemd service file** (see Systemd section below)
+
+The IP address you set will be returned by DNS for all spoofed domains. This should be the public IP of your server where DnsSpoofer is running.
+
+---
+
 ## Build
 
 ```bash
@@ -99,11 +119,19 @@ make build-ubuntu # linux/amd64 (alias)
 
 ## Usage
 
+**Important:** You must set your server's IP address. Use either:
+- Environment variable: `DNS_SPOOFER_IP=YOUR_SERVER_IP`
+- Command-line flag: `-spoof-ip=YOUR_SERVER_IP`
+
 ```bash
-# Default: spoof IP 95.164.123.192, listen on :53, :80, :443
+# Using environment variable
+export DNS_SPOOFER_IP=YOUR_SERVER_IP
 sudo ./dnsspoofer
 
-# Custom spoof IP and ports
+# Using command-line flag
+sudo ./dnsspoofer -spoof-ip=YOUR_SERVER_IP
+
+# Custom ports
 ./dnsspoofer \
   -spoof-ip=YOUR_SERVER_IP \
   -dns-port=:53 \
@@ -111,7 +139,7 @@ sudo ./dnsspoofer
   -https-port=:443
 
 # Custom domain list (comma-separated suffixes)
-./dnsspoofer -spoof-suffixes=".openai.com,.chatgpt.com,.cursor.sh"
+./dnsspoofer -spoof-ip=YOUR_SERVER_IP -spoof-suffixes=".openai.com,.chatgpt.com,.cursor.sh"
 
 # Full flags
 ./dnsspoofer -h
@@ -119,7 +147,7 @@ sudo ./dnsspoofer
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `-spoof-ip` | `95.164.123.192` | IP returned for spoofed domains |
+| `-spoof-ip` | `$DNS_SPOOFER_IP` or `127.0.0.1` | IP returned for spoofed domains (set `DNS_SPOOFER_IP` env var or use flag) |
 | `-dns-port` | `:53` | DNS listen address |
 | `-http-port` | `:80` | HTTP proxy listen address |
 | `-https-port` | `:443` | HTTPS proxy listen address (TCP) |
@@ -140,7 +168,25 @@ sudo chmod +x /usr/local/bin/dnsspoofer
 sudo cp dnsspoofer.service /etc/systemd/system/
 ```
 
-Edit `/etc/systemd/system/dnsspoofer.service` if you need another `-spoof-ip` or ports, then:
+Edit `/etc/systemd/system/dnsspoofer.service` to set your server IP. The service file includes a placeholder:
+
+```ini
+Environment=DNS_SPOOFER_IP=YOUR_SERVER_IP
+```
+
+Replace `YOUR_SERVER_IP` with your actual server IP address. Alternatively, you can use an environment file:
+
+1. Create `/etc/dnsspoofer.conf`:
+   ```ini
+   DNS_SPOOFER_IP=YOUR_SERVER_IP
+   ```
+
+2. Uncomment the `EnvironmentFile` line in the service file:
+   ```ini
+   EnvironmentFile=/etc/dnsspoofer.conf
+   ```
+
+Then reload and restart:
 
 ```bash
 sudo systemctl daemon-reload

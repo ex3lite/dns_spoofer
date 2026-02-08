@@ -77,6 +77,26 @@
 
 ---
 
+## Конфигурация
+
+**Обязательно:** Установите IP адрес вашего сервера одним из способов:
+
+1. **Переменная окружения** (рекомендуется):
+   ```bash
+   export DNS_SPOOFER_IP=YOUR_SERVER_IP
+   ```
+
+2. **Флаг командной строки**:
+   ```bash
+   ./dnsspoofer -spoof-ip=YOUR_SERVER_IP
+   ```
+
+3. **Файл сервиса systemd** (см. секцию Systemd ниже)
+
+Установленный IP адрес будет возвращаться DNS для всех спуфнутых доменов. Это должен быть публичный IP вашего сервера, где запущен DnsSpoofer.
+
+---
+
 ## Сборка
 
 ```bash
@@ -99,11 +119,19 @@ make build-ubuntu # linux/amd64 (алиас)
 
 ## Использование
 
+**Важно:** Необходимо установить IP адрес вашего сервера. Используйте:
+- Переменную окружения: `DNS_SPOOFER_IP=YOUR_SERVER_IP`
+- Флаг командной строки: `-spoof-ip=YOUR_SERVER_IP`
+
 ```bash
-# По умолчанию: спуф IP 95.164.123.192, слушать на :53, :80, :443
+# Используя переменную окружения
+export DNS_SPOOFER_IP=YOUR_SERVER_IP
 sudo ./dnsspoofer
 
-# Кастомный спуф IP и порты
+# Используя флаг командной строки
+sudo ./dnsspoofer -spoof-ip=YOUR_SERVER_IP
+
+# Кастомные порты
 ./dnsspoofer \
   -spoof-ip=YOUR_SERVER_IP \
   -dns-port=:53 \
@@ -111,7 +139,7 @@ sudo ./dnsspoofer
   -https-port=:443
 
 # Кастомный список доменов (суффиксы через запятую)
-./dnsspoofer -spoof-suffixes=".openai.com,.chatgpt.com,.cursor.sh"
+./dnsspoofer -spoof-ip=YOUR_SERVER_IP -spoof-suffixes=".openai.com,.chatgpt.com,.cursor.sh"
 
 # Все флаги
 ./dnsspoofer -h
@@ -119,7 +147,7 @@ sudo ./dnsspoofer
 
 | Флаг | По умолчанию | Описание |
 |------|---------|-------------|
-| `-spoof-ip` | `95.164.123.192` | IP, возвращаемый для спуфнутых доменов |
+| `-spoof-ip` | `$DNS_SPOOFER_IP` или `127.0.0.1` | IP, возвращаемый для спуфнутых доменов (установите переменную `DNS_SPOOFER_IP` или используйте флаг) |
 | `-dns-port` | `:53` | Адрес прослушивания DNS |
 | `-http-port` | `:80` | Адрес прослушивания HTTP прокси |
 | `-https-port` | `:443` | Адрес прослушивания HTTPS прокси (TCP) |
@@ -140,7 +168,25 @@ sudo chmod +x /usr/local/bin/dnsspoofer
 sudo cp dnsspoofer.service /etc/systemd/system/
 ```
 
-Отредактируйте `/etc/systemd/system/dnsspoofer.service` если вам нужен другой `-spoof-ip` или порты, затем:
+Отредактируйте `/etc/systemd/system/dnsspoofer.service` чтобы установить IP вашего сервера. Файл сервиса содержит заглушку:
+
+```ini
+Environment=DNS_SPOOFER_IP=YOUR_SERVER_IP
+```
+
+Замените `YOUR_SERVER_IP` на реальный IP адрес вашего сервера. Альтернативно, можно использовать файл окружения:
+
+1. Создайте `/etc/dnsspoofer.conf`:
+   ```ini
+   DNS_SPOOFER_IP=YOUR_SERVER_IP
+   ```
+
+2. Раскомментируйте строку `EnvironmentFile` в файле сервиса:
+   ```ini
+   EnvironmentFile=/etc/dnsspoofer.conf
+   ```
+
+Затем перезагрузите и перезапустите:
 
 ```bash
 sudo systemctl daemon-reload
