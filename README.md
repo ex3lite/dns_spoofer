@@ -1,6 +1,6 @@
 ![DNS Spoofer](header.png)
 
-**DNS relay with selective spoofing + transparent TCP proxy** for redirecting service traffic (OpenAI, ChatGPT, Google Gemini, Cursor, Microsoft Copilot) through your own server. One binary: DNS answers with your IP for chosen domains, then proxies raw TCP (HTTP/HTTPS) to the real backends.
+**DNS relay with selective spoofing + transparent TCP proxy** for redirecting service traffic (OpenAI, ChatGPT, Google Gemini, Cursor, Microsoft Copilot, GitHub Copilot) through your own server. One binary: DNS answers with your IP for chosen domains, then proxies raw TCP (HTTP/HTTPS) to the real backends.
 
 **Purpose:** This tool is designed to bypass regional restrictions and geo-blocking by routing traffic through your own server located in an unrestricted region. It allows access to AI services that may be blocked or restricted in certain countries.
 
@@ -37,6 +37,7 @@ Result: clients using your server as DNS get AI service domains pointed at you; 
 | **Google Gemini** | `.gemini.google.com`, `.aistudio.google.com`, `.ai.google.dev`, `.generativelanguage.googleapis.com`, `.makersuite.google.com` |
 | **Cursor IDE** | `.cursor.sh`, `.cursor.com`, `.cursorapi.com`, `.cursor-cdn.com` |
 | **Microsoft Copilot** | `.copilot.microsoft.com`, `.bing.com`, `.bingapis.com`, `.edgeservices.bing.com`, `.edgecopilot.microsoft.com` |
+| **GitHub Copilot** | `.githubcopilot.com`, `.individual.githubcopilot.com`, `.business.githubcopilot.com`, `.enterprise.githubcopilot.com`, `.copilot-proxy.githubusercontent.com`, `.origin-tracker.githubusercontent.com`, `.copilot-telemetry.githubusercontent.com`, `.github.com`, `.githubusercontent.com`, `.api.github.com` |
 
 ---
 

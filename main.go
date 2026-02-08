@@ -41,6 +41,17 @@ var (
 		".bingapis.com",
 		".edgeservices.bing.com",
 		".edgecopilot.microsoft.com",
+		// GitHub Copilot
+		".githubcopilot.com",
+		".individual.githubcopilot.com",
+		".business.githubcopilot.com",
+		".enterprise.githubcopilot.com",
+		".copilot-proxy.githubusercontent.com",
+		".origin-tracker.githubusercontent.com",
+		".copilot-telemetry.githubusercontent.com",
+		".github.com",
+		".githubusercontent.com",
+		".api.github.com",
 	}
 	defaultUpstreamDNS = []string{"8.8.8.8:53", "1.1.1.1:53"}
 )

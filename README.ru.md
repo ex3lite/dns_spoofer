@@ -1,6 +1,6 @@
 ![DNS Spoofer](header.png)
 
-**DNS relay с выборочным спуфингом + прозрачный TCP прокси** для перенаправления трафика сервисов (OpenAI, ChatGPT, Google Gemini, Cursor, Microsoft Copilot) через ваш собственный сервер. Один бинарник: DNS отвечает вашим IP для выбранных доменов, затем проксирует сырой TCP (HTTP/HTTPS) к реальным бэкендам.
+**DNS relay с выборочным спуфингом + прозрачный TCP прокси** для перенаправления трафика сервисов (OpenAI, ChatGPT, Google Gemini, Cursor, Microsoft Copilot, GitHub Copilot) через ваш собственный сервер. Один бинарник: DNS отвечает вашим IP для выбранных доменов, затем проксирует сырой TCP (HTTP/HTTPS) к реальным бэкендам.
 
 **Назначение:** Этот инструмент предназначен для обхода региональных блокировок и гео-ограничений путём маршрутизации трафика через ваш собственный сервер, расположенный в регионе без ограничений. Он позволяет получить доступ к AI сервисам, которые могут быть заблокированы или ограничены в определённых странах.
 
@@ -37,6 +37,7 @@
 | **Google Gemini** | `.gemini.google.com`, `.aistudio.google.com`, `.ai.google.dev`, `.generativelanguage.googleapis.com`, `.makersuite.google.com` |
 | **Cursor IDE** | `.cursor.sh`, `.cursor.com`, `.cursorapi.com`, `.cursor-cdn.com` |
 | **Microsoft Copilot** | `.copilot.microsoft.com`, `.bing.com`, `.bingapis.com`, `.edgeservices.bing.com`, `.edgecopilot.microsoft.com` |
+| **GitHub Copilot** | `.githubcopilot.com`, `.individual.githubcopilot.com`, `.business.githubcopilot.com`, `.enterprise.githubcopilot.com`, `.copilot-proxy.githubusercontent.com`, `.origin-tracker.githubusercontent.com`, `.copilot-telemetry.githubusercontent.com`, `.github.com`, `.githubusercontent.com`, `.api.github.com` |
 
 ---
 
